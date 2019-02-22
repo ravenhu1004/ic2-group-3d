@@ -14,6 +14,8 @@
 <body>
 <script src="https://threejs.org/build/three.js"></script>
 <script src="js/orbitControls.js"></script>
+<script src='js/threex.grassground.js'></script>
+
 
 <script>
 
@@ -32,6 +34,8 @@
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	document.body.appendChild(renderer.domElement);
 	this.renderer.setClearColor('#D0CBC7', 1);
+
+
 			
 
 	// GEOMETRY
@@ -51,6 +55,21 @@
 	light.position.set(-5,5,10);
 	scene.add(light);
 
+  
+	// Add the grass ground
+		
+	var mesh = new THREEx.GrassGround({
+		width		: 100,
+		height		: 50,
+		repeatX		: 100,
+		repeatY		: 100,
+		color:      '#7f4f2f'
+	})
+
+	// mesh.scale.multiplyScalar(10)
+	console.dir(mesh)
+	scene.add(mesh)
+	
 
 	// CONTROLS
 	var controls = new THREE.OrbitControls(camera, renderer.domElement);
