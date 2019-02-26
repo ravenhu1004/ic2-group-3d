@@ -12,7 +12,7 @@
     <script type="text/javascript" src="js/orbitControls.js"></script>
 
     <script type="text/javascript">
-      
+
 
 function Game () {
 
@@ -27,8 +27,8 @@ function Game () {
     0.1, 5000);
   this.camera.position.set(100, 100, 100);
   this.cameraPos = {
-    current: new THREE.Vector3(0, 0, 0), 
-    next: new THREE.Vector3() 
+    current: new THREE.Vector3(0, 0, 0),
+    next: new THREE.Vector3()
   };
 
 
@@ -47,26 +47,26 @@ function Game () {
   this.scene.add( ambientLight );
 
 
-   
+
    this.config = {
 
       jumpTopRadius: 0.3,
       jumpBottomRadius: 0.5,
       jumpHeight: 2,
       jumpColor: 0x72a3ae,
-      
+
 
       cubeX: 4,
       cubeY: 2,
       cubeZ: 4,
       cubeColor: 0xbfced8,
-      
+
       cylinderRadius: 2,
       cylinderHeight: 2,
       cylinderColor: 0xf4dfd8,
-      
+
       cubeMaxLen: 6,
-      
+
 
       cubeMinDis: 2.5,
       cubeMaxDis: 4
@@ -97,7 +97,7 @@ Game.prototype.constructor = Game;
 
 Object.assign(Game.prototype, {
 
- 
+
   createCube: function (){
     var relativePos = Math.random() > 0.5 ? 'zDir' : 'xDir';
     // var relativePos = 'xDir';
@@ -110,38 +110,38 @@ Object.assign(Game.prototype, {
     var material = new THREE.MeshLambertMaterial( { color: color } );
     var mesh = new THREE.Mesh(geometry, material);
 
-    
+
     if (this.cubes.length){
       var dis = this.getRandomValue(this.config.cubeMinDis, this.config.cubeMaxDis);
       var lastcube = this.cubes[this.cubes.length - 1];
       if (relativePos === 'zDir'){
         if (cubeType === 'cube'){
           if (lastcube.geometry instanceof THREE.CubeGeometry)
-            
+
             mesh.position.set(lastcube.position.x, lastcube.position.y, lastcube.position.z - dis - this.config.cubeZ );
-          else  
+          else
             mesh.position.set(lastcube.position.x, lastcube.position.y, lastcube.position.z - dis - this.config.cylinderRadius - this.config.cubeZ / 2);
         } else {
           if (lastcube.geometry instanceof THREE.CubeGeometry)
-             
+
              mesh.position.set(lastcube.position.x, lastcube.position.y, lastcube.position.z - dis - this.config.cylinderRadius - this.config.cubeZ / 2);
           else
-            
+
              mesh.position.set(lastcube.position.x, lastcube.position.y, lastcube.position.z -  dis - this.config.cylinderRadius * 2 );
         }
       } else {
         if (cubeType === 'cube'){
           if (lastcube.geometry instanceof THREE.CubeGeometry)
-            
+
             mesh.position.set(lastcube.position.x + dis + this.config.cubeX, lastcube.position.y, lastcube.position.z);
-          else  
+          else
             mesh.position.set(lastcube.position.x + dis + this.config.cubeX / 2 + this.config.cylinderRadius, lastcube.position.y, lastcube.position.z);
         } else {
           if (lastcube.geometry instanceof THREE.CubeGeometry)
-             
+
              mesh.position.set(lastcube.position.x + dis + this.config.cylinderRadius + this.config.cubeX / 2 , lastcube.position.y, lastcube.position.z);
           else
-            
+
              mesh.position.set(lastcube.position.x + dis + this.config.cylinderRadius * 2, lastcube.position.y, lastcube.position.z);
         }
       }
@@ -153,19 +153,19 @@ Object.assign(Game.prototype, {
     this.cubes.push(mesh);
     this.scene.add(mesh);
     this._render();
-    
+
     if (this.cubes.length > this.config.cubeMaxLen){
       this.scene.remove(this.cubes.shift());
     }
     if (this.cubes.length > 1){
-      
+
       this._updateCameraPos();
     } else {
       this.camera.lookAt(this.cameraPos.current);
     }
   },
 
-  
+
   createJumper: function (){
     var geometry = new THREE.CylinderGeometry(this.config.jumpTopRadius, this.config.jumpBottomRadius, this.config.jumpHeight, 100);
     var material = new THREE.MeshLambertMaterial( { color: this.config.jumpColor } );
@@ -247,10 +247,10 @@ Object.assign(Game.prototype, {
 
   _onMouseDown: function (){
     this.mouseState = -1;
-    if (this.jumper.scale.y > 0.02){ 
+    if (this.jumper.scale.y > 0.02){
       this.jumper.scale.y -= 0.01;
-      this.xspeed += 0.004; 
-      this.yspeed += 0.008; 
+      this.xspeed += 0.004;
+      this.yspeed += 0.008;
       this._render();
       requestAnimationFrame(function (){
         if (this.mouseState === -1) this._onMouseDown();
@@ -262,7 +262,7 @@ Object.assign(Game.prototype, {
     var self  = this;
     this.mouseState  = 1;
     if (this.jumper.position.y >= this.config.jumpHeight / 2){
-      
+
       var dir = this.getDirection();
       if (dir === 'x'){
         this.jumper.position.x += this.xspeed;
@@ -272,9 +272,9 @@ Object.assign(Game.prototype, {
         this.jumper.position.y += this.yspeed;
       }
       this._render();
-      
+
       this.yspeed -= 0.01;
-      
+
       if (this.jumper.scale.y < 1){
         this.jumper.scale.y += 0.02;
       }
@@ -282,18 +282,18 @@ Object.assign(Game.prototype, {
         this._onMouseUp();
       }.bind(this));
     } else {
-      
+
       var type = this.getJumpState();
       console.log('jumpstate:' + type);
 
       if (type === 1){
-        
+
         this.xspeed = 0;
         this.yspeed = 0;
         this.jumper.scale.y = 1;
         this.jumper.position.y = this.config.jumpHeight / 2;
       } else if(type === 2 || type === 3){
-        
+
          this.score += 1;
          this.xspeed = 0;
          this.yspeed = 0;
@@ -302,7 +302,7 @@ Object.assign(Game.prototype, {
          this._updateScore();
          this.createCube();
       } else if (type === -2){
-        
+
         (function continuefalling () {
           if (self.jumper.position.y >= -self.config.jumpHeight / 2){
             self.jumper.position.y -= 0.06;
@@ -316,7 +316,7 @@ Object.assign(Game.prototype, {
           }, 1000);
         }
       } else {
-        
+
         this.failingAnimation(type);
         if (this.failCallback) {
           setTimeout(function(){
@@ -353,8 +353,8 @@ Object.assign(Game.prototype, {
     this.scene.remove(this.jumper);
 
     this.cameraPos = {
-      current: new THREE.Vector3(0, 0, 0), 
-      next: new THREE.Vector3() 
+      current: new THREE.Vector3(0, 0, 0),
+      next: new THREE.Vector3()
     };
     this.cubes = [];
     this.jumper = null;
@@ -374,7 +374,7 @@ Object.assign(Game.prototype, {
   },
 
   getRandomValue: function (min, max){
-    
+
     return Math.floor(Math.random() * (max - min)) + min;
   },
 
@@ -406,7 +406,7 @@ Object.assign(Game.prototype, {
      }
   },
 
-  
+
   getJumpState: function (){
       var jumpR = this.config.jumpBottomRadius;
       var vard = this.getd();
@@ -446,14 +446,14 @@ Object.assign(Game.prototype, {
     if (fromType === 'cube'){
        if (toType === 'cube'){
            if ( fromPosition.x === toPosition.x ){
-             // -z 
+             // -z
              d = Math.abs(position.z);
              d1 = Math.abs(fromPosition.z - this.config.cubeZ / 2);
              d2 = Math.abs(toPosition.z + this.config.cubeZ / 2);
              d3 = Math.abs(toPosition.z);
              d4 = Math.abs(toPosition.z - this.config.cubeZ / 2);
            } else {
-             // x 
+             // x
              d = Math.abs(position.x);
              d1 = Math.abs(fromPosition.x + this.config.cubeX / 2);
              d2 = Math.abs(toPosition.x - this.config.cubeX / 2);
@@ -462,14 +462,14 @@ Object.assign(Game.prototype, {
            }
        } else {
          if ( fromPosition.x === toPosition.x ){
-           // -z 
+           // -z
            d = Math.abs(position.z);
            d1 = Math.abs(fromPosition.z - this.config.cubeZ / 2);
            d2 = Math.abs(toPosition.z + this.config.cylinderRadius);
            d3 = Math.abs(toPosition.z);
            d4 = Math.abs(toPosition.z - this.config.cylinderRadius);
          } else {
-           // x 
+           // x
            d = Math.abs(position.x);
            d1 = Math.abs(fromPosition.x + this.config.cubeX / 2);
            d2 = Math.abs(toPosition.x - this.config.cylinderRadius);
@@ -480,14 +480,14 @@ Object.assign(Game.prototype, {
     } else {
       if (toType === 'cube'){
         if ( fromPosition.x === toPosition.x ){
-          // -z 
+          // -z
           d = Math.abs(position.z);
           d1 = Math.abs(fromPosition.z - this.config.cylinderRadius);
           d2 = Math.abs(toPosition.z + this.config.cubeZ / 2);
           d3 = Math.abs(toPosition.z);
           d4 = Math.abs(toPosition.z - this.config.cubeZ / 2);
         } else {
-          // x 
+          // x
           d = Math.abs(position.x);
           d1 = Math.abs(fromPosition.x + this.config.cylinderRadius);
           d2 = Math.abs(toPosition.x - this.config.cubeX / 2);
@@ -496,14 +496,14 @@ Object.assign(Game.prototype, {
         }
       } else {
         if ( fromPosition.x === toPosition.x ){
-          // -z 
+          // -z
           d = Math.abs(position.z);
           d1 = Math.abs(fromPosition.z - this.config.cylinderRadius);
           d2 = Math.abs(toPosition.z + this.config.cylinderRadius);
           d3 = Math.abs(toPosition.z);
           d4 = Math.abs(toPosition.z - this.config.cylinderRadius);
         } else {
-         
+
           d = Math.abs(position.x);
           d1 = Math.abs(fromPosition.x + this.config.cylinderRadius);
           d2 = Math.abs(toPosition.x - this.config.cylinderRadius);
@@ -548,6 +548,12 @@ Object.assign(Game.prototype, {
     return flag;
   }
 });
+
+var geom = new THREE.BoxGeometry(5,5,5);
+var mat = new THREE.MeshPhongMaterial({color:"pink"}); // works only with light - but has gloss
+var mesh = new THREE.Mesh(geom, mat);
+mesh.position.set(20, 20,10);
+scene.add(mesh);
 
     </script>
   </head>
