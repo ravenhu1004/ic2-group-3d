@@ -1,572 +1,72 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Jump with Cube</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=false">
-
-    <link rel="stylesheet" href="css/style.css">
-
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"></script>
-    <script type="text/javascript" src="js/game.js"></script>
-    <script type="text/javascript" src="js/orbitControls.js"></script>
-
-    <script type="text/javascript">
-
-
-function Game () {
-
-  //SCENE
-  this.scene = new THREE.Scene(0xf7d9aa, 100,950);
-
-  //CAMERA
-  this.camera = new THREE.OrthographicCamera(window.innerWidth / -80,
-    window.innerWidth / 80,
-    window.innerHeight / 80,
-    window.innerHeight / -80,
-    0.1, 5000);
-  this.camera.position.set(100, 100, 100);
-  this.cameraPos = {
-    current: new THREE.Vector3(0, 0, 0),
-    next: new THREE.Vector3()
-  };
-
-
-  //RENDERER
-  this.renderer = new THREE.WebGLRenderer({ antialias: true });
-  this.renderer.setSize(window.innerWidth, window.innerHeight);
-  this.renderer.setClearColor('#D8ECFF', 1);
-  document.body.appendChild( this.renderer.domElement );
-  this.canvas = this.renderer.domElement;
-
-  // LIGHTS
-  var directionalLight = new THREE.DirectionalLight( 0xffffff, 1.1);
-  directionalLight.position.set( 3, 10, 15);
-  this.scene.add( directionalLight );
-  var ambientLight = new THREE.AmbientLight( 0xffffff, 0.3 );
-  this.scene.add( ambientLight );
-
-
-
-   this.config = {
-
-      jumpTopRadius: 0.3,
-      jumpBottomRadius: 0.5,
-      jumpHeight: 2,
-      jumpColor: 0x72a3ae,
-
-
-      cubeX: 4,
-      cubeY: 2,
-      cubeZ: 4,
-      cubeColor: 0xbfced8,
-
-      cylinderRadius: 2,
-      cylinderHeight: 2,
-      cylinderColor: 0xf4dfd8,
-
-      cubeMaxLen: 6,
-
-
-      cubeMinDis: 2.5,
-      cubeMaxDis: 4
-   };
-
-   this.mouse = {
-     down: this.isPC() ? 'mousedown' : 'touchstart',
-     up: this.isPC() ? 'mouseup' : 'touchend'
-   };
-
-   this.cubes = [];
-   this.jumper = null;
-
-   // mousedown : -1
-   // mouseup : 1
-   this.mouseState = 0;
-   this.xspeed = 0;
-   this.yspeed = 0;
-   this.score = 0;
-
-   this._initScore();
-
-   this.failCallback = function(){};
-
-}
-
-Game.prototype.constructor = Game;
-
-Object.assign(Game.prototype, {
-
-
-  createCube: function (){
-    var relativePos = Math.random() > 0.5 ? 'zDir' : 'xDir';
-    // var relativePos = 'xDir';
-    var cubeType = Math.random() > 0.5 ? 'cube' : 'cylinder';
-
-    var geometry = cubeType === 'cube' ?
-    new THREE.CubeGeometry(this.config.cubeX, this.config.cubeY, this.config.cubeZ):
-    new THREE.CylinderGeometry(this.config.cylinderRadius, this.config.cylinderRadius, this.config.cylinderHeight, 100);
-    var color = cubeType === 'cube' ? this.config.cubeColor : this.config.cylinderColor;
-    var material = new THREE.MeshLambertMaterial( { color: color } );
-    var mesh = new THREE.Mesh(geometry, material);
-
-
-    if (this.cubes.length){
-      var dis = this.getRandomValue(this.config.cubeMinDis, this.config.cubeMaxDis);
-      var lastcube = this.cubes[this.cubes.length - 1];
-      if (relativePos === 'zDir'){
-        if (cubeType === 'cube'){
-          if (lastcube.geometry instanceof THREE.CubeGeometry)
-
-            mesh.position.set(lastcube.position.x, lastcube.position.y, lastcube.position.z - dis - this.config.cubeZ );
-          else
-            mesh.position.set(lastcube.position.x, lastcube.position.y, lastcube.position.z - dis - this.config.cylinderRadius - this.config.cubeZ / 2);
-        } else {
-          if (lastcube.geometry instanceof THREE.CubeGeometry)
-
-             mesh.position.set(lastcube.position.x, lastcube.position.y, lastcube.position.z - dis - this.config.cylinderRadius - this.config.cubeZ / 2);
-          else
-
-             mesh.position.set(lastcube.position.x, lastcube.position.y, lastcube.position.z -  dis - this.config.cylinderRadius * 2 );
-        }
-      } else {
-        if (cubeType === 'cube'){
-          if (lastcube.geometry instanceof THREE.CubeGeometry)
-
-            mesh.position.set(lastcube.position.x + dis + this.config.cubeX, lastcube.position.y, lastcube.position.z);
-          else
-            mesh.position.set(lastcube.position.x + dis + this.config.cubeX / 2 + this.config.cylinderRadius, lastcube.position.y, lastcube.position.z);
-        } else {
-          if (lastcube.geometry instanceof THREE.CubeGeometry)
-
-             mesh.position.set(lastcube.position.x + dis + this.config.cylinderRadius + this.config.cubeX / 2 , lastcube.position.y, lastcube.position.z);
-          else
-
-             mesh.position.set(lastcube.position.x + dis + this.config.cylinderRadius * 2, lastcube.position.y, lastcube.position.z);
-        }
-      }
-    } else {
-      mesh.position.set(0, 0, 0);
-    }
-
-    this.testPosition(mesh.position);
-    this.cubes.push(mesh);
-    this.scene.add(mesh);
-    this._render();
-
-    if (this.cubes.length > this.config.cubeMaxLen){
-      this.scene.remove(this.cubes.shift());
-    }
-    if (this.cubes.length > 1){
-
-      this._updateCameraPos();
-    } else {
-      this.camera.lookAt(this.cameraPos.current);
-    }
-  },
-
-
-  createJumper: function (){
-    var geometry = new THREE.CylinderGeometry(this.config.jumpTopRadius, this.config.jumpBottomRadius, this.config.jumpHeight, 100);
-    var material = new THREE.MeshLambertMaterial( { color: this.config.jumpColor } );
-    var mesh = new THREE.Mesh(geometry, material);
-    geometry.translate(0, this.config.jumpHeight / 2, 0);
-    mesh.position.set(0, this.config.jumpHeight / 2, 0);
-    this.jumper = mesh;
-    this.scene.add( mesh );
-    this._render();
-  },
-
-  _render: function (){
-    this.renderer.render(this.scene, this.camera);
-  },
-
-  _updateCameraPos: function (){
-    var a = this.cubes[this.cubes.length - 2];
-    var b = this.cubes[this.cubes.length - 1];
-    var toPos = {
-      x: ( a.position.x + b.position.x ) / 2,
-      y: 0,
-      z: ( a.position.z + b.position.z ) / 2
-    };
-    this.cameraPos.next = new THREE.Vector3(toPos.x, toPos.y, toPos.z);
-    this._updateCamera();
-  },
-
-  _updateCamera: function (){
-    var self = this;
-    var c = {
-      x: self.cameraPos.current.x,
-      y: self.cameraPos.current.y,
-      z: self.cameraPos.current.z
-    };
-    var n = {
-      x: self.cameraPos.next.x,
-      y: self.cameraPos.next.y,
-      z: self.cameraPos.next.z
-    };
-    if (c.x < n.x || c.z > n.z) {
-      if ( c.x < n.x ) self.cameraPos.current.x += 0.1;
-      if (c.z > n.z) self.cameraPos.current.z -= 0.1;
-      if ( Math.abs(self.cameraPos.current.x - self.cameraPos.next.x) < 0.05) {
-        self.cameraPos.current.x = self.cameraPos.next.x;
-      }
-      if ( Math.abs(self.cameraPos.current.z - self.cameraPos.next.z) < 0.05) {
-        self.cameraPos.current.z = self.cameraPos.next.z;
-      }
-      self.camera.lookAt(new THREE.Vector3(c.x, 0, c.z));
-      self._render();
-      requestAnimationFrame(function(){
-        self._updateCamera();
-      });
-    }
-  },
-
-  _registerEvent: function (){
-    this.canvas.addEventListener(this.mouse.down, this._onMouseDown.bind(this));
-    this.canvas.addEventListener(this.mouse.up, this._onMouseUp.bind(this));
-    window.addEventListener('resize', this._onwindowResize.bind(this), false);
-  },
-
-  _destoryEvent: function (){
-    this.canvas.removeEventListener(this.mouse.down, this._onMouseDown.bind(this));
-    this.canvas.removeEventListener(this.mouse.up, this._onMouseUp.bind(this));
-    window.removeEventListener('resize', this._onwindowResize.bind(this), false);
-
-  },
-
-  _onwindowResize: function (){
-    this.camera.left = window.innerWidth / -80;
-    this.camera.right = window.innerWidth / 80;
-    this.camera.top = window.innerHeight / 80;
-    this.camera.bottom = window.innerHeight / -80;
-    this.camera.updateProjectionMatrix();
-
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-  },
-
-  _onMouseDown: function (){
-    this.mouseState = -1;
-    if (this.jumper.scale.y > 0.02){
-      this.jumper.scale.y -= 0.01;
-      this.xspeed += 0.004;
-      this.yspeed += 0.008;
-      this._render();
-      requestAnimationFrame(function (){
-        if (this.mouseState === -1) this._onMouseDown();
-      }.bind(this));
-    }
-  },
-
-  _onMouseUp: function (){
-    var self  = this;
-    this.mouseState  = 1;
-    if (this.jumper.position.y >= this.config.jumpHeight / 2){
-
-      var dir = this.getDirection();
-      if (dir === 'x'){
-        this.jumper.position.x += this.xspeed;
-        this.jumper.position.y += this.yspeed;
-      } else {
-        this.jumper.position.z -= this.xspeed;
-        this.jumper.position.y += this.yspeed;
-      }
-      this._render();
-
-      this.yspeed -= 0.01;
-
-      if (this.jumper.scale.y < 1){
-        this.jumper.scale.y += 0.02;
-      }
-      requestAnimationFrame(function (){
-        this._onMouseUp();
-      }.bind(this));
-    } else {
-
-      var type = this.getJumpState();
-      console.log('jumpstate:' + type);
-
-      if (type === 1){
-
-        this.xspeed = 0;
-        this.yspeed = 0;
-        this.jumper.scale.y = 1;
-        this.jumper.position.y = this.config.jumpHeight / 2;
-      } else if(type === 2 || type === 3){
-
-         this.score += 1;
-         this.xspeed = 0;
-         this.yspeed = 0;
-         this.jumper.scale.y = 1;
-         this.jumper.position.y = this.config.jumpHeight / 2;
-         this._updateScore();
-         this.createCube();
-      } else if (type === -2){
-
-        (function continuefalling () {
-          if (self.jumper.position.y >= -self.config.jumpHeight / 2){
-            self.jumper.position.y -= 0.06;
-            self._render();
-            requestAnimationFrame(continuefalling);
-          }
-        })();
-        if (this.failCallback) {
-          setTimeout(function(){
-            self.failCallback(self.score);
-          }, 1000);
-        }
-      } else {
-
-        this.failingAnimation(type);
-        if (this.failCallback) {
-          setTimeout(function(){
-            self.failCallback(self.score);
-          }, 1000);
-        }
-      }
-    }
-  },
-
-  _initScore: function (){
-    var el = document.createElement('div');
-    el.id = "score";
-    el.innerHTML = '0';
-    document.body.appendChild(el);
-  },
-
-  _updateScore: function (){
-    document.getElementById('score').innerHTML = this.score;
-  },
-
-  start: function() {
-    this.createCube();
-    this.createCube();
-    this.createJumper();
-    this._registerEvent();
-    this._updateScore();
-  },
-
-  restart: function (){
-    for (var i = 0, len = this.cubes.length; i < len; i++){
-      this.scene.remove(this.cubes[i]);
-    }
-    this.scene.remove(this.jumper);
-
-    this.cameraPos = {
-      current: new THREE.Vector3(0, 0, 0),
-      next: new THREE.Vector3()
-    };
-    this.cubes = [];
-    this.jumper = null;
-    this.mouseState = 0;
-    this.xspeed = 0;
-    this.yspeed = 0;
-    this.score = 0;
-
-    this.createCube();
-    this.createCube();
-    this.createJumper();
-    this._updateScore();
-  },
-
-  stop: function() {
-
-  },
-
-  getRandomValue: function (min, max){
-
-    return Math.floor(Math.random() * (max - min)) + min;
-  },
-
-  failingAnimation: function (state){
-     var rotateAxis = this.getDirection() === 'z' ? 'x' : 'z';
-     var rotateAdd, rotateTo;
-     if (state === -1){
-       rotateAdd = this.jumper.rotation[rotateAxis] - 0.1;
-       rotateTo = this.jumper.rotation[rotateAxis] > -Math.PI / 2;
-     } else {
-       rotateAdd = this.jumper.rotation[rotateAxis] + 0.1;
-       rotateTo = this.jumper.rotation[rotateAxis] < Math.PI / 2;
-     }
-     if (rotateTo){
-       this.jumper.rotation[rotateAxis] = rotateAdd;
-       this._render();
-       requestAnimationFrame(function (){
-         this.failingAnimation(state);
-       }.bind(this));
-     } else {
-       var self  = this;
-       (function continuefalling () {
-         if (self.jumper.position.y >= -self.config.jumpHeight / 2){
-           self.jumper.position.y -= 0.06;
-           self._render();
-           requestAnimationFrame(continuefalling);
-         }
-       })();
-     }
-  },
-
-
-  getJumpState: function (){
-      var jumpR = this.config.jumpBottomRadius;
-      var vard = this.getd();
-      var d = vard.d;
-      var d1 = vard.d1;
-      var d2 = vard.d2;
-      var d3 = vard.d3;
-      var d4 = vard.d4;
-      if (d <= d1) {
-        return 1;
-      }  else if (d > d1 && Math.abs(d - d1) <= jumpR) {
-        return -1;
-      } else if (Math.abs(d - d1) > jumpR && d < d2 && Math.abs(d - d2) >= jumpR){
-        return -2;
-      } else if ( d < d2 && Math.abs(d - d2) < jumpR){
-        return -3;
-      } else if ( d > d2 && d <= d4){
-        return 2;
-      } else if ( d > d4 && Math.abs(d - d4) < jumpR){
-        return -1;
-      } else {
-        return -2;
-      }
-  },
-
-  getd: function (){
-    var d, d1, d2, d3, d4;
-    var fromObj = this.cubes[this.cubes.length - 2];
-    var fromPosition = fromObj.position;
-    var fromType = fromObj.geometry instanceof THREE.CubeGeometry ? 'cube' : 'cylinder';
-    var toObj = this.cubes[this.cubes.length - 1];
-    var toPosition = toObj.position;
-    var toType = toObj.geometry instanceof THREE.CubeGeometry ? 'cube' : 'cylinder';
-    var jumpObj = this.jumper;
-    var position = jumpObj.position;
-
-    if (fromType === 'cube'){
-       if (toType === 'cube'){
-           if ( fromPosition.x === toPosition.x ){
-             // -z
-             d = Math.abs(position.z);
-             d1 = Math.abs(fromPosition.z - this.config.cubeZ / 2);
-             d2 = Math.abs(toPosition.z + this.config.cubeZ / 2);
-             d3 = Math.abs(toPosition.z);
-             d4 = Math.abs(toPosition.z - this.config.cubeZ / 2);
-           } else {
-             // x
-             d = Math.abs(position.x);
-             d1 = Math.abs(fromPosition.x + this.config.cubeX / 2);
-             d2 = Math.abs(toPosition.x - this.config.cubeX / 2);
-             d3 = Math.abs(toPosition.x);
-             d4 = Math.abs(toPosition.x + this.config.cubeX / 2);
-           }
-       } else {
-         if ( fromPosition.x === toPosition.x ){
-           // -z
-           d = Math.abs(position.z);
-           d1 = Math.abs(fromPosition.z - this.config.cubeZ / 2);
-           d2 = Math.abs(toPosition.z + this.config.cylinderRadius);
-           d3 = Math.abs(toPosition.z);
-           d4 = Math.abs(toPosition.z - this.config.cylinderRadius);
-         } else {
-           // x
-           d = Math.abs(position.x);
-           d1 = Math.abs(fromPosition.x + this.config.cubeX / 2);
-           d2 = Math.abs(toPosition.x - this.config.cylinderRadius);
-           d3 = Math.abs(toPosition.x);
-           d4 = Math.abs(toPosition.x + this.config.cylinderRadius);
-         }
-       }
-    } else {
-      if (toType === 'cube'){
-        if ( fromPosition.x === toPosition.x ){
-          // -z
-          d = Math.abs(position.z);
-          d1 = Math.abs(fromPosition.z - this.config.cylinderRadius);
-          d2 = Math.abs(toPosition.z + this.config.cubeZ / 2);
-          d3 = Math.abs(toPosition.z);
-          d4 = Math.abs(toPosition.z - this.config.cubeZ / 2);
-        } else {
-          // x
-          d = Math.abs(position.x);
-          d1 = Math.abs(fromPosition.x + this.config.cylinderRadius);
-          d2 = Math.abs(toPosition.x - this.config.cubeX / 2);
-          d3 = Math.abs(toPosition.x);
-          d4 = Math.abs(toPosition.x + this.config.cubeX / 2);
-        }
-      } else {
-        if ( fromPosition.x === toPosition.x ){
-          // -z
-          d = Math.abs(position.z);
-          d1 = Math.abs(fromPosition.z - this.config.cylinderRadius);
-          d2 = Math.abs(toPosition.z + this.config.cylinderRadius);
-          d3 = Math.abs(toPosition.z);
-          d4 = Math.abs(toPosition.z - this.config.cylinderRadius);
-        } else {
-
-          d = Math.abs(position.x);
-          d1 = Math.abs(fromPosition.x + this.config.cylinderRadius);
-          d2 = Math.abs(toPosition.x - this.config.cylinderRadius);
-          d3 = Math.abs(toPosition.x);
-          d4 = Math.abs(toPosition.x + this.config.cylinderRadius);
-        }
-      }
-    }
-
-    return {d: d, d1: d1, d2: d2, d3: d3, d4: d4};
-  },
-
-  getDirection: function (){
-    var direction;
-    if (this.cubes.length > 1){
-      var from = this.cubes[this.cubes.length - 2];
-      var to = this.cubes[this.cubes.length - 1];
-      if (from.position.z === to.position.z) direction = 'x';
-      if (from.position.x === to.position.x) direction = 'z';
-    }
-    return direction;
-  },
-
-  testPosition: function (position){
-    if (isNaN(position.x) || isNaN(position.y) || isNaN(position.z)){
-      console.log('position incorrect！');
-    }
-  },
-
- isPC: function() {
-    var userAgentInfo = navigator.userAgent;
-    var Agents = ["Android", "iPhone",
-                "SymbianOS", "Windows Phone",
-                "iPad", "iPod"];
-    var flag = true;
-    for (var v = 0; v < Agents.length; v++) {
-        if (userAgentInfo.indexOf(Agents[v]) > 0) {
-            flag = false;
-            break;
-        }
-    }
-    return flag;
-  }
-});
-
-var geom = new THREE.BoxGeometry(5,5,5);
-var mat = new THREE.MeshPhongMaterial({color:"pink"}); // works only with light - but has gloss
-var mesh = new THREE.Mesh(geom, mat);
-mesh.position.set(20, 20,10);
-scene.add(mesh);
-
-    </script>
-  </head>
-
-  <body>
-
-    <div class="page startPage">
-        <button type="button" class="startBtn">PLAY</button>
-    </div>
-    <div class="page restartPage">
-      <p>Score<span class="scoreNum"></span> </p>
-      <button type="button" class="restartBtn">Restart</button>
-    </div>
-    <script type="text/javascript" src="js/main.js"></script>
-  </body>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=0" />
+		<meta name="description" content="Recreate children's toy,puzzle with geometric shapes then place in correct hole" />
+
+<title>Recreate children's toy</title>
+<style>
+	body {margin:0px;}
+	canvas {width:100%; height:100%}
+</style>
+</head>
+<body>
+<script src="https://threejs.org/build/three.js"></script>
+<script src="js/orbitControls.js"></script>
+<script src='js/threex.grassground.js'></script>
+
+
+<script>
+	// SCENE
+	var scene = new THREE.Scene();
+	// CAMERA
+	var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+	camera.position.z = 10;
+	camera.position.x = 5;
+	camera.position.y = 5;
+	camera.lookAt(scene.position);
+	// RENDERER
+	var renderer = new THREE.WebGLRenderer({antialias:true});
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	document.body.appendChild(renderer.domElement);
+	this.renderer.setClearColor('#D0CBC7', 1);
+
+	// GEOMETRY
+	var geom = new THREE.BoxGeometry(5,5,5);
+	// MATERIAL
+
+	var mat = new THREE.MeshPhongMaterial({color:"pink"}); // works only with light - but has gloss
+	// MESH
+	var mesh = new THREE.Mesh(geom, mat);
+	scene.add(mesh);
+	// LIGHT
+	var light = new THREE.PointLight(0xffffff); // white light in hex number
+	light.position.set(-5,5,10);
+	scene.add(light);
+
+	// Add the grass ground
+
+	var mesh = new THREEx.GrassGround({
+		width		: 100,
+		height		: 50,
+		repeatX		: 100,
+		repeatY		: 100,
+		color:      '#7f4f2f'
+	})
+	// mesh.scale.multiplyScalar(10)
+	console.dir(mesh)
+	scene.add(mesh)
+
+	// CONTROLS
+	var controls = new THREE.OrbitControls(camera, renderer.domElement);
+	// ANIMATION
+	function render() {
+
+		requestAnimationFrame(render);
+		renderer.render(scene, camera);
+	}
+	render();
+</script>
+</body>
 </html>
