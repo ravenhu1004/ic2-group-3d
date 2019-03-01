@@ -21,14 +21,18 @@
 			// var cube = new THREE.Mesh( geometry, material );
 			// scene.add( cube );
 
+
+			//ELENA EXTERNAL OBJECT TEST START
       var loader = new THREE.JSONLoader();
-loader.load( 'untitled-scene.json', function ( geometry, materials ) {
-    var mesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial( materials ) );
-    scene.add( mesh );
+      loader.load( 'untitled-scene.json', function ( geometry, materials ) {
+      var mesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial( materials ) );
+      scene.add( mesh );
+
 });
+		//ELENA EXTERNAL OBJECT TEST END
 
 
-			camera.position.z = 5;
+			camera.position.z = 100;
 
 			var animate = function () {
 				requestAnimationFrame( animate );
@@ -43,9 +47,7 @@ loader.load( 'untitled-scene.json', function ( geometry, materials ) {
 
 			animate();
 
-
 });
-
 
 		</script>
 	</body>
