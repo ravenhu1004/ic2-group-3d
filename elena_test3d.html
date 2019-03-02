@@ -123,22 +123,25 @@
 			var cylinder = new THREE.Mesh( geometry, material );
 			cylinder.position.x += 50;
 			cylinder.position.y += 5;
+			// cylinder.scale.y += 0.09;
 			// cylinder.scale.y += 5;
 			scene.add( cylinder );
 
 
 			//  base cylinder
 			var geometry = new THREE.CylinderGeometry( 5, 5, 3, 32 );
-			var material = new THREE.MeshBasicMaterial( {color: 0x8c5b00} );
+			var material = new THREE.MeshBasicMaterial( {color: 0x664200} );
 			var cylinder2 = new THREE.Mesh( geometry, material );
 			cylinder2.position.x += 50;
 			cylinder2.position.y += -25;
-			// cylinder2.scale.y += -2;
+			cylinder2.scale.x += 2;
+			cylinder2.scale.z += 2;
 			scene.add( cylinder2 );
 
 
 			// camera.position.z = 5;
-			camera.position.z = 60;
+			camera.position.z = 90;
+			// camera.rotation.x = 1;
 
 			var animate = function () {
 				requestAnimationFrame( animate );
@@ -148,8 +151,8 @@
 				// cube.rotation.y += 0.01;
 
 				// torus animation
-				// torus.rotation.x += 0.01;
-				// torus.rotation.y += 0.01;
+				// torusRed.rotation.x += 0.01;
+				// torusRed.rotation.y += 0.01;
 
 				renderer.render( scene, camera );
 			};
