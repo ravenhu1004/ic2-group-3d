@@ -14,6 +14,7 @@
 <body>
 <script src="https://threejs.org/build/three.js"></script>
 <!-- <script src="js/orbitControls.js"></script> -->
+<script src="js/DragControls.js"></script>
 
 
 <script>
@@ -52,7 +53,7 @@
 
 				//attempting to create draggable purple torus
 				scene.add(torusPurple);
-				objects.push(torusPurple);
+
 
 
 				// blue torus
@@ -152,10 +153,13 @@
 				cylinder2.scale.z += 2;
 				scene.add( cylinder2 );
 
+
+		objects.push(torusPurple, torusBlue, torusGreen, torusYellow, torusOrange, torusRed);		
+
 		//Elena's object end
 
 		//drag object test - attempt to drag purple torus
-		// var controls = new THREE.DragControls(objects, camera, renderer.domElement);
+		var controls = new THREE.DragControls(objects, camera, renderer.domElement);
 
 
 
