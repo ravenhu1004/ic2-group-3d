@@ -13,8 +13,7 @@
 </head>
 <body>
 <script src="https://threejs.org/build/three.js"></script>
-<script src="js/orbitControls.js"></script>
-<script src='js/threex.grassground.js'></script>
+<!-- <script src="js/orbitControls.js"></script> -->
 
 
 <script>
@@ -32,24 +31,28 @@
 	document.body.appendChild(renderer.domElement);
 	this.renderer.setClearColor('#D0CBC7', 1);
 
+	var objects = [];
 
+
+	//Elena's object start
 	//all torus shapes
-
 
 				// purple torus
 				var geometryPurple = new THREE.TorusGeometry( 10, 3, 16, 100 );
 				// geometry1.scale.set(12,6,1);
 				var materialPurple = new THREE.MeshBasicMaterial( { color: 0x2e0070 } );
 				var torusPurple = new THREE.Mesh( geometryPurple, materialPurple);
-				// torus.scale.y += 0.01;
+
 				torusPurple.scale.y += 0.02;
 				torusPurple.scale.z += 0.02;
 				torusPurple.scale.x += 0.02;
 				torusPurple.rotation.x += 30;
-				// torus.scale.z += 0.5;
-				// torus.scale.x += 0.5;
 				torusPurple.position.y += 21;
+
+
+				//attempting to create draggable purple torus
 				scene.add(torusPurple);
+				objects.push(torusPurple);
 
 
 				// blue torus
@@ -62,10 +65,10 @@
 				torusBlue.scale.z += 0.03;
 				torusBlue.scale.x += 0.03;
 				torusBlue.rotation.x += 30;
-				// torus.scale.z += 0.5;
-				// torus.scale.x += 0.5;
 				torusBlue.position.y += 15;
+
 				scene.add(torusBlue);
+
 
 
 				// green torus
@@ -73,15 +76,15 @@
 				// geometry1.scale.set(12,6,1);
 				var materialGreen = new THREE.MeshBasicMaterial( { color: 0x21b500 } );
 				var torusGreen = new THREE.Mesh( geometryGreen, materialGreen);
-				// torus.scale.y += 0.01;
+
 				torusGreen.scale.y += 0.05;
 				torusGreen.scale.z += 0.05;
 				torusGreen.scale.x += 0.05;
 				torusGreen.rotation.x += 30;
-				// torus.scale.z += 0.5;
-				// torus.scale.x += 0.5;
+
 				torusGreen.position.y += 9;
 				scene.add(torusGreen);
+
 
 
 				// torus - yellow
@@ -89,15 +92,15 @@
 				// geometry1.scale.set(12,6,1);
 				var materialYellow = new THREE.MeshBasicMaterial( { color: 0xf9e720 } );
 				var torusYellow = new THREE.Mesh( geometryYellow, materialYellow);
-				// torus.scale.y += 0.01;
+
 				torusYellow.scale.y += 0.04;
 				torusYellow.scale.z += 0.04;
 				torusYellow.scale.x += 0.04;
 				torusYellow.rotation.x += 30;
-				// torus.scale.z += 0.5;
-				// torus.scale.x += 0.5;
+
 				torusYellow.position.y += 3;
 				scene.add(torusYellow);
+
 
 
 				// torus - orange
@@ -105,15 +108,14 @@
 				// geometry1.scale.set(12,6,1);
 				var materialOrange = new THREE.MeshBasicMaterial( { color: 0xf97c00 } );
 				var torusOrange = new THREE.Mesh( geometryOrange, materialOrange);
-				// torus.scale.y += 0.01;
+
 				torusOrange.scale.y += 0.03;
 				torusOrange.scale.z += 0.03;
 				torusOrange.scale.x += 0.03;
 				torusOrange.rotation.x += 30;
-				// torus.scale.z += 0.5;
-				// torus.scale.x += 0.5;
 				torusOrange.position.y += -3;
 				scene.add(torusOrange);
+
 
 
 				// torus test - red
@@ -121,13 +123,11 @@
 				// geometry1.scale.set(12,6,1);
 				var materialRed = new THREE.MeshBasicMaterial( { color: 0xba0000 } );
 				var torusRed = new THREE.Mesh( geometryRed, materialRed );
-				// torus.scale.y += 0.01;
+
 				torusRed.scale.y += 0.2;
 				torusRed.scale.z += 0.2;
 				torusRed.scale.x += 0.2;
 				torusRed.rotation.x += 30;
-				// torus.scale.z += 0.5;
-				// torus.scale.x += 0.5;
 				torusRed.position.y += -9;
 				scene.add(torusRed);
 
@@ -152,15 +152,35 @@
 				cylinder2.scale.z += 2;
 				scene.add( cylinder2 );
 
-	// CONTROLS
-	var controls = new THREE.OrbitControls(camera, renderer.domElement);
-	// ANIMATION
-	function render() {
+		//Elena's end start
 
-		requestAnimationFrame(render);
-		renderer.render(scene, camera);
-	}
-	render();
+		//drag object test
+		// var controls = new THREE.DragControls(objects, camera, renderer.domElement);
+
+	// CONTROLS
+	// var controls = new THREE.OrbitControls(camera, renderer.domElement);
+	// ANIMATION
+	var animate = function () {
+		requestAnimationFrame( animate );
+
+		// cube.rotation.x += 0.01;
+		// cube.rotation.y += 0.01;
+		// mesh.rotation.x += 0.01;
+		// mesh.rotation.y += 0.01;
+
+		renderer.render( scene, camera );
+	};
+
+	animate();
+
+	// function render() {
+	//
+	// 	requestAnimationFrame(render);
+	// 	renderer.render(scene, camera);
+	// }
+	// render();
+
+
 </script>
 </body>
 </html>
