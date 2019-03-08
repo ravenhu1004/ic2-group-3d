@@ -40,17 +40,16 @@
 
 	var objects = [];
 
-	// LIGHT
-	var width = 10;
-var height = 10;
-var intensity = 1;
-var rectLight = new THREE.RectAreaLight( 0xffffff, intensity,  width, height );
-rectLight.position.set( 100, 50, 0 );
-rectLight.lookAt( 0, 0, 0 );
-scene.add( rectLight )
+	//Creating light by Raven
 
-rectLightHelper = new THREE.RectAreaLightHelper( rectLight );
-rectLight.add( rectLightHelper );
+	// LIGHT
+	
+	var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5);
+	directionalLight.position.set(100,350,250);
+	directionalLight.castShadow = true;
+
+	scene.add(directionalLight);
+
 
 	//Elena's object start
 	//all torus shapes
@@ -76,7 +75,7 @@ rectLight.add( rectLightHelper );
 				// blue torus
 				var geometryBlue = new THREE.TorusGeometry( 10, 3, 16, 100 );
 				// geometry1.scale.set(12,6,1);
-				var materialBlue = new THREE.MeshBasicMaterial( { color: 0x0b0191 } );
+				var materialBlue = new THREE.MeshLambertMaterial( { color: 0x00A2FF } );
 				var torusBlue = new THREE.Mesh( geometryBlue, materialBlue);
 				// torus.scale.y += 0.01;
 				torusBlue.scale.y += 0.03;
