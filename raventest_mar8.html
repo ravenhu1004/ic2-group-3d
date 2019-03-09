@@ -15,6 +15,7 @@
 <script src="https://threejs.org/build/three.js"></script>
 <!-- <script src="js/orbitControls.js"></script> -->
 <script src="js/DragControls.js"></script>
+<script src="https://d309knd7es5f10.cloudfront.net/zim_10.js"></script>
 
 
 
@@ -28,11 +29,17 @@
 	var scene = new THREE.Scene();
 	// CAMERA
 	var camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 1000);
+
 	camera.position.z = 80;
 	camera.position.x = 10;
 	camera.position.y = 25;
+
+	camera.up.x = 0;
+    camera.up.y = 1;
+    camera.up.z = 0;
+
 	camera.lookAt(scene.position);
-	
+
 	// RENDERER
 	var renderer = new THREE.WebGLRenderer({antialias:true});
 	renderer.setSize(window.innerWidth, window.innerHeight);
@@ -46,15 +53,12 @@
 	// LIGHT
 
     var hemiLight = new THREE.HemisphereLight(0xffffff, 0x000000, 1);
-	hemiLight.position.set(0, 100, 0); //
+	hemiLight.position.set(0, 100, 0); 
 	scene.add(hemiLight);
 
-	// var spotLight = new THREE.SpotLight(0xffffff);
 	
-	// spotLight.position.set(-30, 60, 60);
-	// spotLight.castShadow = true;
+
 	
-	// scene.add(spotLight);
 	
 	// var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5);
 	// directionalLight.position.set(100,350,250);
@@ -230,6 +234,8 @@
 	// 	renderer.render(scene, camera);
 	// }
 	// render();
+
+	
      
 
 
