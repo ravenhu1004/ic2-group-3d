@@ -13,6 +13,8 @@
 </head>
 <body>
 <script src="https://threejs.org/build/three.js"></script>
+<script src="js/physics/physi.js"></script>
+<script src="js/physics/physijs_worker.js"></script>
 <!-- <script src="js/orbitControls.js"></script> -->
 <script src="js/DragControls.js"></script>
 
@@ -25,7 +27,12 @@
 
 
 	// SCENE
+
+	var world = tQuery.createWorld();
+	
 	var scene = new THREE.Scene();
+
+
 	// CAMERA
 	var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 	camera.position.z = 70;
@@ -39,6 +46,8 @@
 	this.renderer.setClearColor('#D8ECFF', 1);
 
 	var objects = [];
+
+	// world.enablePhysics();
 
 	// LIGHT
 	var width = 10;
@@ -182,15 +191,15 @@ rectLight.add( rectLightHelper );
 		ground.scale.x += 0.2;
 		ground.rotation.x += 30;
 		ground.position.y += -30;
-		scene.add(ground);		
+		scene.add(ground);
 
 
-		objects.push(torusPurple, torusBlue, torusGreen, torusYellow, torusOrange, torusRed,ground);		
+		objects.push(torusPurple, torusBlue, torusGreen, torusYellow, torusOrange, torusRed,ground);
 
 		//Elena's object end
 
 
-		
+
 
 		//drag object test - attempt to drag purple torus
 		var controls = new THREE.DragControls(objects, camera, renderer.domElement);
@@ -222,7 +231,7 @@ rectLight.add( rectLightHelper );
 	// 	renderer.render(scene, camera);
 	// }
 	// render();
-     
+
 
 
 
