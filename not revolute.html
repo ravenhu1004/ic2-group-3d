@@ -8,9 +8,6 @@
 <script src="https://d309knd7es5f10.cloudfront.net/createjs_1.1_min.js"></script>
 <script src="https://d309knd7es5f10.cloudfront.net/zim_10.js"></script>
 
-<!-- use zimjs.com/distill for minified individual functions! -->
-
-<!-- import Box2D and ZIM Physics helper -->
 <script src="https://d309knd7es5f10.cloudfront.net/Box2dWeb-2.1.a.3.min.js"></script>
 <script src="https://d309knd7es5f10.cloudfront.net/physics_2.0.js"></script>
 
@@ -19,7 +16,7 @@
 <script>
 
 
-var scaling = "fit"; // this will resize to fit inside the screen dimensions
+var scaling = "fit"; 
 var width = 1024;
 var height = 768;
 var color = light;
@@ -27,99 +24,51 @@ var outerColor = darker;
 var assets = ["ball.png", "bottle.png"];
 var path = "assets/";
 
-// as of ZIM 5.5.0 you do not need to put zim before ZIM functions and classes
+
 var frame = new Frame(scaling, width, height, color, outerColor, assets, path);
 frame.on("ready", function() {
-    zog("ready from ZIM Frame"); // logs in console (F12 - choose console)
-
+    zog("ready from ZIM Frame"); 
     var stage = frame.stage;
     var stageW = frame.width;
     var stageH = frame.height;
 
     var physics = new Physics(20);
 
+    
+
     var bar = new Rectangle(300,10,dark).loc(290,95).addPhysics(false); // static TOP BAR
 
 
-    var rope1 = new Rectangle(10,500,dark) .loc(400,95) .addPhysics(false); //
-        rope1.addTo(stage).addPhysics({linear:.5, angular:5});
+    var rope1 = new Rectangle(10,500,dark) 
+    .loc(450,95)
+    .addPhysics()
+    .addTo(stage);
 
- physics.join(bar, rope1, new Point(rope1.x, rope1.y-rope1.height/2), null, null, null, "revolute")
-
-
-    var rope2 = new Rectangle(10,550,dark).loc(460,95).addPhysics(false);
-        rope2.addTo(stage).addPhysics({linear:.5, angular:5});
-
-   physics.join(bar, rope2, new Point(rope2.x, rope2.y-rope2.height/2), null, null, null, "revolute")
-
-   // var seat = new Rectangle(20,100,dark) 
-   //      seat.addTo(stage).addPhysics({linear:1, angular:5});
-   //      physics.join(rope2, seat);
-
-    // var seat = new Rectangle(20,100, dark) .loc(.x, rope2.y+link.height/2).addPhysics();
-    //     physics.join(seat, rope2);
+    physics.join(bar, rope1, new Point(rope1.x, rope1.y-rope1.height/2), null, null, null, "revolute")
 
 
 
+    var rope2 = new Rectangle(10,500,dark)
+    .loc(360,95)
+    .addPhysics()
+    .addTo(stage);
 
-    // loop(rope1.items, function (link, i) {
-    //         if (i==0) {
-    //             physics.join(bar, link, new Point(link.x, link.y-link.height/2), null, null, null, "revolute")
-    //         } else {
-    //             link.cur();
-    //             var one = beads.items[i-1];
-    //             var two = beads.items[i];
-    //             physics.join(one, two, new Point(one.x, one.y+one.height/2), null, null, null, "revolute")
-    //         }
+    physics.join(bar, rope2, new Point(rope2.x, rope2.y-rope2.height/2), null, null, null, "revolute")
 
 
+    var seat = new Rectangle(100,30,dark)
+    .loc(rope2.x, rope1.y+rope1.height)
+    .addTo(stage)
+    .addPhysics();
 
-      // var bar2 = new Rectangle(50,20,dark) .loc(link.x, link.y+link.height/2).addPhysics();
-      //   physics.join(bar2, li);
-
-
-    // // function to make one strand
-    // function beads(x, y) {
-    //     var beads = new Tile(new Rectangle(10,500,series(dark)).centerReg(), 1, 1).loc(x,y);
-    //     beads.loop(function (link, i) {
-    //         // move the tile to the stage so physics works on it properly
-    //         link.addTo(stage).addPhysics({linear:.5, angular:5});
-    //     }, true); // loop backwards when removing children (from Tile to stage)
-
-    //     // link the chain
-    //     // join(obj1, obj2, point1, point2, minAngle, maxAngle, type) - creates and returns a physics joint
-    //     loop(beads.items, function (link, i) {
-    //         if (i==0) {
-    //             physics.join(bar, link, new Point(link.x, link.y-link.height/2), null, null, null, "revolute")
-    //         } else {
-    //             link.cur();
-    //             var one = beads.items[i-1];
-    //             var two = beads.items[i];
-    //             physics.join(one, two, new Point(one.x, one.y+one.height/2), null, null, null, "revolute")
-    //         }
-    //     });
-
-    //     var link = beads.items[beads.items.length-1]
-    //     // var ball = new Circle(10, dark).loc(link.x, link.y+link.height/2).addPhysics();
-    //     // physics.join(ball, link);
-    //     var bar2 = new Rectangle(50,20,dark) .loc(link.x, link.y+link.height/2).addPhysics();
-    //     physics.join(bar2, link);
-
-    // }
-
-    // // create several beads
-    // loop(1, function (i) {
-    //     beads(400+i*50, 100);
-    // });
+    physics.join(seat, rope2);
+    physics.join(seat, rope1);
 
 
 
-    // physics.drag()
-
-
-    stage.update(); // this is needed to show any changes
-
-}); // end of ready
+    physics.drag()
+    stage.update();
+}); 
 
 </script>
 
@@ -128,10 +77,5 @@ frame.on("ready", function() {
 </head>
 
 <body>
-<!-- canvas with id="myCanvas" is made by zim Frame -->
-<script>
-var r=Math.round(Math.random()*1000000);
-document.write('<img src=/cgi-bin/traffic_plus?company=danzen&page=zimPhysicsBeads&r='+r+' width=1 height=1>');
-</script>
 </body>
 </html>
