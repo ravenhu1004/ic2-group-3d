@@ -11,6 +11,9 @@
 
 <script src="https://d309knd7es5f10.cloudfront.net/Box2dWeb-2.1.a.3.min.js"></script>
 <script src="https://d309knd7es5f10.cloudfront.net/physics_2.0.js"></script>
+<script src="js/lufylegend-1.10.1.simple.min.js"></script>
+
+
 
 <script src="https://zimjs.com/ten/header.js"></script>
 
@@ -30,55 +33,92 @@ var frame = new Frame(scaling, width, height, color, outerColor, assets, path);
 frame.on("ready", function() {
     zog("ready from ZIM Frame"); // logs in console (F12 - choose console)
 
+    
+
     var stage = frame.stage;
     var stageW = frame.width;
     var stageH = frame.height;
+
+
 
     var physics = new Physics(20);
 
     var bar = new Rectangle(300,10,"dark").loc(290,95).addPhysics(false); // static
 
     // function to make one strand
-    function beads(x, y) {
-        var beads = new Tile(new Rectangle(10,100,series("dark","blue","green","pink","yellow","orange")).centerReg(), 1, 6).loc(x,y);
-        beads.loop(function (link, i) {
+    var rope1 = function rope1(x, y) {
+        var rope1 = new Tile(new Rectangle(10,100,series("dark","blue","green","pink","yellow","orange")).centerReg(), 1, 6).loc(x,y);
+        rope1.loop(function (link, i) {
             // move the tile to the stage so physics works on it properly
             link.addTo(stage).addPhysics({linear:.5, angular:5});
         }, true); // loop backwards when removing children (from Tile to stage)
 
         // link the chain
         // join(obj1, obj2, point1, point2, minAngle, maxAngle, type) - creates and returns a physics joint
-        loop(beads.items, function (link, i) {
+        loop(rope1.items, function (link, i) {
             if (i==0) {
                 physics.join(bar, link, new Point(link.x, link.y-link.height/2), null, null, null, "revolute")
             } else {
                 link.cur();
-                var one = beads.items[i-1];
-                var two = beads.items[i];
+                var one = rope1.items[i-1];
+                var two = rope1.items[i];
                 physics.join(one, two, new Point(one.x, one.y+one.height/2), null, null, null, "revolute")
             }
         });
-        var link = beads.items[beads.items.length-1]
-        var ball = new Circle(8, dark).loc(link.x, link.y+link.height/2).addPhysics();
-        physics.join(ball, link);
+      
     }
 
-
-
-    // create several beads
-    loop(2, function (i) {
-        beads(310+i*250, 100);
+    // create rope1
+    loop(1, function (i) {
+        rope1(310+i*250, 100);
     });
 
 
 
-    physics.drag()
+    // function to make one strand
+    var rope2 = function rope2(x, y) {
+        var rope2 = new Tile(new Rectangle(10,100,series("dark","blue","green","pink","yellow","orange")).centerReg(), 1, 6).loc(x,y);
+        rope2.loop(function (link, i) {
+            // move the tile to the stage so physics works on it properly
+            link.addTo(stage).addPhysics({linear:.5, angular:5});
+        }, true); // loop backwards when removing children (from Tile to stage)
+
+        // link the chain
+        // join(obj1, obj2, point1, point2, minAngle, maxAngle, type) - creates and returns a physics joint
+        loop(rope2.items, function (link, i) {
+            if (i==0) {
+                physics.join(bar, link, new Point(link.x, link.y-link.height/2), null, null, null, "revolute")
+            } else {
+                link.cur();
+                var one = rope2.items[i-1];
+                var two = rope2.items[i];
+                physics.join(one, two, new Point(one.x, one.y+one.height/2), null, null, null, "revolute")
+            }
+        });
+        var link = rope2.items[rope2.items.length-1]
+         var board = new Rectangle(300, 20, "blue").loc(rope1.x, rope2.y+rope2.height/2).addPhysics(true);
+    
+    physics.join(board,link);
+        
+    }
+
+    // create rope2
+    loop(1, function (i) {
+        rope2(560+i*250, 100);
+    });
+
+
+   
+   
+
+
+    physics.drag();
 
 
     // HEADER / FOOTER
     // if copying code - do not copy header and footer
     makeHeader("Box2D - Swing", null, null, "Three JS", "ravenedit_test3d3.html");
-    // makeHeader("ZIM - List() with accordion parameter", "List", true, "TEN", "https://zimjs.com/ten.html");
+ 
     makeFooter();
 
     stage.update(); // this is needed to show any changes
