@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html>
 <head>
@@ -40,34 +39,26 @@ frame.on("ready", function() {
 
 
     var rope1 = new Rectangle(10,500,dark)
-    .centerReg()
-    .loc(290, 345)
-    // .loc(450,95)
+    .loc(450,95)
     .addPhysics()
-    // .addTo(stage);
+    .addTo(stage);
 
     physics.join(bar, rope1, new Point(rope1.x, rope1.y-rope1.height/2), null, null, null, "revolute")
 
 
 
     var rope2 = new Rectangle(10,500,dark)
-    .centerReg()
-    .loc(590, 345)
-    // .loc(360,95)
+    .loc(360,95)
     .addPhysics()
-    // .addTo(stage);
+    .addTo(stage);
 
     physics.join(bar, rope2, new Point(rope2.x, rope2.y-rope2.height/2), null, null, null, "revolute")
 
 
-
     var seat = new Rectangle(100,30,dark)
-    .centerReg()
     .loc(rope2.x, rope1.y+rope1.height)
-    // .loc(, rope1.y+rope1.height)
+    .addTo(stage)
     .addPhysics();
-    // .addTo(stage)
-
 
     physics.join(seat, rope2);
     physics.join(seat, rope1);
