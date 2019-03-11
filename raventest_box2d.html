@@ -43,7 +43,12 @@ frame.on("ready", function() {
 
     var physics = new Physics(20);
 
+
     var bar = new Rectangle(300,10,"dark").loc(290,95).addPhysics(false); // static
+
+    var seat = new Rectangle(300,20,"blue").loc(290,650).addPhysics(true);
+    
+   
 
     // function to make one strand
     var rope1 = function rope1(x, y) {
@@ -57,7 +62,19 @@ frame.on("ready", function() {
         // join(obj1, obj2, point1, point2, minAngle, maxAngle, type) - creates and returns a physics joint
         loop(rope1.items, function (link, i) {
             if (i==0) {
-                physics.join(bar, link, new Point(link.x, link.y-link.height/2), null, null, null, "revolute")
+                physics.join(bar,link, new Point(link.x, link.y-link.height/2,  seat), null, null, null, "revolute")
+            } else {
+                link.cur();
+                var one = rope1.items[i-1];
+                var two = rope1.items[i];
+                physics.join(one, two, new Point(one.x, one.y+one.height/2), null, null, null, "revolute")
+            }
+        });
+
+
+         loop(rope1.items, function (link, i) {
+            if (i==0) {
+                physics.join(seat, link, new Point(link.x, link.y-link.height/2,  seat), null, null, null, "revolute")
             } else {
                 link.cur();
                 var one = rope1.items[i-1];
@@ -87,7 +104,7 @@ frame.on("ready", function() {
         // join(obj1, obj2, point1, point2, minAngle, maxAngle, type) - creates and returns a physics joint
         loop(rope2.items, function (link, i) {
             if (i==0) {
-                physics.join(bar, link, new Point(link.x, link.y-link.height/2), null, null, null, "revolute")
+                physics.join(bar, link, new Point(link.x, link.y-link.height/2), seat, null, null, null, "revolute")
             } else {
                 link.cur();
                 var one = rope2.items[i-1];
@@ -95,10 +112,18 @@ frame.on("ready", function() {
                 physics.join(one, two, new Point(one.x, one.y+one.height/2), null, null, null, "revolute")
             }
         });
-        var link = rope2.items[rope2.items.length-1]
-         var board = new Rectangle(300, 20, "blue").loc(rope1.x, rope2.y+rope2.height/2).addPhysics(true);
-    
-    physics.join(board,link);
+
+         loop(rope2.items, function (link, i) {
+            if (i==0) {
+                physics.join(seat, link, new Point(link.x, link.y-link.height/2),null, null, null, "revolute")
+            } else {
+                link.cur();
+                var one = rope2.items[i-1];
+                var two = rope2.items[i];
+                physics.join(one, two, new Point(one.x, one.y+one.height/2), null, null, null, "revolute")
+            }
+        });
+
         
     }
 
@@ -108,7 +133,7 @@ frame.on("ready", function() {
     });
 
 
-   
+    
    
 
 
