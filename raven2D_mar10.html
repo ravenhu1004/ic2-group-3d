@@ -57,11 +57,12 @@ frame.on("ready", function() {
 
     // create a sink that will attract the particles and create an orbit
    
+    var board = new Rectangle(300,10,"brown").centerReg().addTo(stage).addPhysics(false);
 
 
     // eg.1 make a bunch of spewing pink circles affected by gravity
-var emitter = new Emitter(new Circle(5, pink))
-   .centerReg(stage);
+    // var emitter = new Emitter(new Circle(5, pink))
+    //     .centerReg(stage);
 
 // eg.2 use a sink to attract the particles
  var iceCream = frame.asset("ice-cream.png")
@@ -71,31 +72,59 @@ var emitter = new Emitter(new Circle(5, pink))
                .addPhysics();
 
     physics.drag();
-// make one of three types of particles and randomize the colors
-var particles = new Emitter({
-   obj:[
-      new Circle(20,null,2)
-   ],
-   random:{color:[blue, green, pink, yellow, orange]},
-   interval:20, // default
-   life:5000,
-   decayTime:1000, // default
-   iceCream:iceCream,
-   sinkForce:.5,
-   gravity:0,
-   force:1,
-   cache:mobile() // default
-})
-   .addTo(stage)
-   .sca(2)
-   .addPhysics();
+    // physics.debug();
+
+
+
+  stage.on("stagemousemove", startGame, null, true); 
+  function startGame() {
+    
+    Ticker.add(animate);
+
+    
+    dropDust();
+    
+  }   
+   
+  var dustS = new Container();
+  game.addChild(dustS); 
+
+  function dropDust() {
+
+
+    var dust = new Emitter({
+        obj:[
+           new Circle(10, null, null, 2),
+           new Circle(5, null, null, 2),
+           new Circle(15, null, null, 2)
+
+        ],
+        random:{color:[blue,green,pink,yellow]},
+        interval:20,
+        life:5000,
+        decayTime:1000,
+        sinkForce:.5,
+        gravtity:1,
+        force:1,
+        cache:mobile()
+
+      })
+      .sca(2);
+
+        dust.reg(dust.width/2, dust.height-10);
+        
+
+    
+  
+  } 
+
 
 
 
 
 
     
-    var title = "Pysics 2D";
+    var title = "Physics 2D";
     var label = new Label(title, 30, null, "#666")
         .addTo(stage)
         .pos(40, 40);
