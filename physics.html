@@ -18,9 +18,9 @@
 <script>
 
 var scaling = "fit";
-var width = 1024; 
+var width = 1024;
 var height = 768;
-var frame = new zim.Frame(scaling, width, height); 
+var frame = new zim.Frame(scaling, width, height);
 frame.on("ready", function() {
     zog("ready from ZIM Frame");
 
@@ -28,7 +28,7 @@ frame.on("ready", function() {
     var stageW = frame.width;
     var stageH = frame.height;
     frame.color = "black";
-    
+
 
 
 
@@ -43,7 +43,7 @@ frame.on("ready", function() {
             new zim.Rectangle(30,30,null,frame.darker,2),
             new zim.Triangle(40,40,40,null,frame.darker,2)
         ],
-   
+
         random:{color:[frame.green, frame.white, frame.blue]},
 
         width:stageW,
@@ -75,7 +75,7 @@ frame.on("ready", function() {
    //                  .addTo(stage);
    //  physics.drag()
 
-  
+
 
     // var button = new zim.Button({
     //     width:300,
@@ -102,7 +102,7 @@ frame.on("ready", function() {
     });
 
 
-    
+
     stage.update(); // update the stage to see any changes
 
 }); // end of ready
