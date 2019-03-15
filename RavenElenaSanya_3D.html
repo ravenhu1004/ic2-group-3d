@@ -5,22 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=0" />
 		<meta name="description" content="Recreate children's toy,puzzle with geometric shapes then place in correct hole" />
 
-<title>Recreate children's toy</title>
+<title>Recreate Children's Toy</title>
 <style>
 	body {margin:0px;}
 	canvas {width:100%; height:100%}
 </style>
 </head>
 <body>
+
 <script src="https://threejs.org/build/three.js"></script>
-<!-- <script src="js/orbitControls.js"></script> -->
 <script src="js/DragControls.js"></script>
 <script src="https://d309knd7es5f10.cloudfront.net/zim_10.js"></script>
-
-
-
-</style>
-
 
 <script>
 
@@ -33,10 +28,9 @@
 	camera.position.z = 80;
 	camera.position.x = 10;
 	camera.position.y = 25;
-
 	camera.up.x = 0;
-    camera.up.y = 1;
-    camera.up.z = 0;
+  camera.up.y = 1;
+  camera.up.z = 0;
 
 	camera.lookAt(scene.position);
 
@@ -48,18 +42,16 @@
 
 	var objects = [];
 
-	// Create light 
+
+
+	// Create light
 
 	// LIGHT
-
-    var hemiLight = new THREE.HemisphereLight(0xffffff, 0x000000, 1);
-	hemiLight.position.set(0, 100, 0); 
+  var hemiLight = new THREE.HemisphereLight(0xffffff, 0x000000, 1);
+	hemiLight.position.set(0, 100, 0);
 	scene.add(hemiLight);
 
-	
 
-	
-	
 	// var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5);
 	// directionalLight.position.set(100,350,250);
 	// directionalLight.castShadow = true;
@@ -88,10 +80,8 @@
 
 				// blue torus
 				var geometryBlue = new THREE.TorusGeometry( 10, 3, 16, 100 );
-				// geometry1.scale.set(12,6,1);
 				var materialBlue = new THREE.MeshPhongMaterial( { color: 0x00A2FF } );
 				var torusBlue = new THREE.Mesh( geometryBlue, materialBlue);
-				// torus.scale.y += 0.01;
 				torusBlue.scale.y += 0.03;
 				torusBlue.scale.z += 0.03;
 				torusBlue.scale.x += 0.03;
@@ -103,7 +93,6 @@
 
 				// green torus
 				var geometryGreen = new THREE.TorusGeometry( 10, 3, 16, 100 );
-				// geometry1.scale.set(12,6,1);
 				var materialGreen = new THREE.MeshPhongMaterial( { color: 0x21b500 } );
 				var torusGreen = new THREE.Mesh( geometryGreen, materialGreen);
 
@@ -111,7 +100,6 @@
 				torusGreen.scale.z += 0.05;
 				torusGreen.scale.x += 0.05;
 				torusGreen.rotation.x += 30;
-
 				torusGreen.position.y += 9;
 				scene.add(torusGreen);
 
@@ -119,7 +107,6 @@
 
 				// torus - yellow
 				var geometryYellow = new THREE.TorusGeometry( 10, 3, 16, 100 );
-				// geometry1.scale.set(12,6,1);
 				var materialYellow = new THREE.MeshPhongMaterial( { color: 0xf9e720 } );
 				var torusYellow = new THREE.Mesh( geometryYellow, materialYellow);
 
@@ -135,7 +122,6 @@
 
 				// torus - orange
 				var geometryOrange = new THREE.TorusGeometry( 10, 3, 16, 100 );
-				// geometry1.scale.set(12,6,1);
 				var materialOrange = new THREE.MeshPhongMaterial( { color: 0xf97c00 } );
 				var torusOrange = new THREE.Mesh( geometryOrange, materialOrange);
 
@@ -150,7 +136,6 @@
 
 				// torus test - red
 				var geometryRed = new THREE.TorusGeometry( 10, 3, 16, 100 );
-				// geometry1.scale.set(12,6,1);
 				var materialRed = new THREE.MeshPhongMaterial( { color: 0xba0000 } );
 				var torusRed = new THREE.Mesh( geometryRed, materialRed );
 
@@ -167,8 +152,6 @@
 				var cylinder = new THREE.Mesh( geometry, material );
 				cylinder.position.x += 50;
 				cylinder.position.y += 5;
-				// cylinder.scale.y += 0.09;
-				// cylinder.scale.y += 5;
 				scene.add( cylinder );
 
 
@@ -176,8 +159,8 @@
 				var geometry = new THREE.CylinderGeometry( 5, 5, 3, 32 );
 				var material = new THREE.MeshPhongMaterial( {color: 0x664200} );
 				var cylinder2 = new THREE.Mesh( geometry, material );
-				cylinder2.position.x += 50;
-				cylinder2.position.y += -25;
+				cylinder2.position.x = 50;
+				cylinder2.position.y = -25;
 				cylinder2.scale.x += 2;
 				cylinder2.scale.z += 2;
 				scene.add( cylinder2 );
@@ -194,51 +177,35 @@
 		ground.scale.x += 0.2;
 		ground.rotation.x += 30;
 		ground.position.y += -30;
-		scene.add(ground);		
+		scene.add(ground);
 
 
-		objects.push(torusPurple, torusBlue, torusGreen, torusYellow, torusOrange, torusRed,ground);		
+		objects.push(torusPurple, torusBlue, torusGreen, torusYellow, torusOrange, torusRed,ground);
 
 		//Elena's object end
 
-
-		
-
-		//drag object test - attempt to drag purple torus
+		//drag objects
 		var controls = new THREE.DragControls(objects, camera, renderer.domElement);
-
-
-
-	// CONTROLS
-	// var controls = new THREE.OrbitControls(camera, renderer.domElement);
-
 
 
 	// ANIMATION
 	var animate = function () {
 		requestAnimationFrame( animate );
+			console.log(torusPurple.position.x);
 
-		// cube.rotation.x += 0.01;
-		// cube.rotation.y += 0.01;
-		// mesh.rotation.x += 0.01;
-		// mesh.rotation.y += 0.01;
+			if ((torusPurple.position.x > 40 || torusPurple.position.x < 60)&& (torusPurple.position.z > -10 || torusPurple.position.z < 10)) {
+				// objects.noDrag(torusPurple);
+				console.log('success');
+				//turn off dragging purple
+				// torusPurple.position.x = 0;
+				// torusPurple.position.z = 0;
+				// torusPurple.position.z = 50;
+			}
 
 		renderer.render( scene, camera );
 	};
 
 	animate();
-
-	// function render() {
-	//
-	// 	requestAnimationFrame(render);
-	// 	renderer.render(scene, camera);
-	// }
-	// render();
-
-	
-     
-
-
 
 </script>
 

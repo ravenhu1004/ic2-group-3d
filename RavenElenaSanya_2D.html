@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>Ball Emitter</title>
+<title>Icecream Drop</title>
 
 <script src="https://d309knd7es5f10.cloudfront.net/createjs_1.1_min.js"></script>
 <script src="https://d309knd7es5f10.cloudfront.net/zim_10.js"></script>
@@ -34,14 +34,18 @@ frame.on("ready", function() {
     var stageH = frame.height;
     // frame.color = "black";
 
-
-
     var backing = frame.asset("background.jpg")
         .center(stage)
         .sca(.4)
         .pos(null, 140)
         .addTo(animation);
     frame.asset("").play({volume:.7, loop:true});
+
+    var title = "Physics 2D";
+    var label = new Label(title, 30, null, "#666")
+        .addTo(stage)
+        .pos(40, 40);
+
 
     var background = new Scroller({backing:backing, speed:1, gapFix:1});
     var animation = new Container(stageW, stageH).addTo(stage);
@@ -55,25 +59,18 @@ frame.on("ready", function() {
 
     var physics = new Physics(20);
 
-    // create a sink that will attract the particles and create an orbit
 
     var board = new Rectangle(300,10,"brown").centerReg().addTo(stage).addPhysics(false);
 
 
-    // eg.1 make a bunch of spewing pink circles affected by gravity
-    // var emitter = new Emitter(new Circle(5, pink))
-    //     .centerReg(stage);
 
-// eg.2 use a sink to attract the particles
- var iceCream = frame.asset("ice-cream.png")
-               .addTo(stage)
-               .pos(500, -100)
-               .sca(.4)
-               .addPhysics();
+   var iceCream = frame.asset("ice-cream.png")
+                 .addTo(stage)
+                 .pos(500, -100)
+                 .sca(.4)
+                 .addPhysics();
 
     physics.drag();
-    // physics.debug();
-
 
 
   stage.on("stagemousemove", startGame, null, true);
@@ -112,45 +109,7 @@ frame.on("ready", function() {
       .sca(2);
 
         dust.reg(dust.width/2, dust.height-10);
-
-
-
-
   }
-
-
-  var particles = new Emitter({
-   obj:[
-      new Circle(20,null,2)
-   ],
-   random:{color:[blue, green, pink, yellow, orange]},
-   interval:20, // default
-   life:5000,
-   decayTime:1000, // default
-   iceCream:iceCream,
-   sinkForce:.5,
-   gravity:0,
-   force:1,
-   cache:mobile() // default
-})
-   .addTo(stage)
-   .sca(2)
-   .addPhysics();
-
-
-
-
-
-
-
-    var title = "Physics 2D";
-    var label = new Label(title, 30, null, "#666")
-        .addTo(stage)
-        .pos(40, 40);
-
-
-    stage.update();
-
 
 
     stage.update(); // update the stage to see any changes
